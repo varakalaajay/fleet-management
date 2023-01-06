@@ -11,19 +11,21 @@ function Devices() {
   const [devices, setDevices] = useState([]);
 
   useEffect(() => {
-    
-      axios({
-        method: 'post',
-        url: 'http://174.138.121.17:8001/infinite/get_devices',
-        headers: { 'Content-Type': 'application/octet-stream', 'x-token' : token, 'x-user': user },
-        params: { 'device_id': 'Device03' },
-        
-    })
-      .then((res) => {
-        setDevices(res.data);
-        console.log(res.data);
-      })
-      .catch((err) => {
+    const listDevices = async () => {
+      try {
+        const resp = await axios({
+          method: "post",
+          url: "http://174.138.121.17:8001/infinite/get_devices",
+          headers: {
+            "Content-Type": "application/octet-stream",
+            "x-token": token,
+            "x-user": user,
+          },
+          params: { device_id: "Device03" },
+        });
+
+        setDevices(resp.data);
+      } catch (err) {
         if (err) {
           swal({
             text: err,
@@ -31,8 +33,10 @@ function Devices() {
             type: "error",
           });
         }
-      });
-  }, []);
+      }
+    };
+    listDevices();
+  }, [devices]);
 
   const columns = [
     { field: "device_id", headerName: "Device ID", width: 150 },

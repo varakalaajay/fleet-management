@@ -1,8 +1,6 @@
 import * as React from "react";
-import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
+import { styled } from "@mui/material/styles";
 import MuiDrawer from "@mui/material/Drawer";
-import Box from "@mui/material/Box";
 import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import List from "@mui/material/List";
@@ -10,15 +8,9 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import Badge from "@mui/material/Badge";
-import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import Link from "@mui/material/Link";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import { mainListItems } from "./listItems";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import {
   Avatar,
   ListItemButton,
@@ -26,14 +18,11 @@ import {
   ListItemText,
   Menu,
   MenuItem,
-  Tooltip,
 } from "@mui/material";
-import PersonAdd from "@mui/icons-material/PersonAdd";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
 import { useLocation, useNavigate } from "react-router-dom";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import ListSubheader from "@mui/material/ListSubheader";
 import LogoutIcon from "@mui/icons-material/Logout";
 import DirectionsBusFilledIcon from "@mui/icons-material/DirectionsBusFilled";
 import RoomIcon from "@mui/icons-material/Room";
@@ -173,21 +162,10 @@ function Header() {
                   color="inherit"
                 >
                   <AccountCircle />
-                </IconButton>
-                <p>{person}</p>
+                </IconButton>{/* 
+                <p>{person}</p> */}
               </MenuItem>
-              {/* <Tooltip title="Account settings">
-                     <IconButton
-                       onClick={handleClick}
-                       size="small"
-                       sx={{ ml: 2 }}
-                       aria-controls={open1 ? "account-menu" : undefined}
-                       aria-haspopup="true"
-                       aria-expanded={open1 ? "true" : undefined}
-                     >
-                       <Avatar sx={{ width: 32, height: 32 }}>A</Avatar>
-                     </IconButton>
-                   </Tooltip> */}
+             
               <Menu
                 anchorEl={anchorEl}
                 id="account-menu"
@@ -230,12 +208,6 @@ function Header() {
                   <Avatar /> My account
                 </MenuItem>
                 <Divider />
-                <MenuItem>
-                  <ListItemIcon>
-                    <PersonAdd fontSize="small" />
-                  </ListItemIcon>
-                  Add another account
-                </MenuItem>
                 <MenuItem>
                   <ListItemIcon>
                     <Settings fontSize="small" />

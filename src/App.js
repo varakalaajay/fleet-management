@@ -7,8 +7,6 @@ import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
 import AddDevice from "./AddDevice"; */
 import Header from "./Header";
 import { Box } from "@mui/material";
-/* import Login from "./Login";
-import DrawMap from "./draw"; */
 const mdTheme = createTheme();
 const Dashboard = React.lazy(() => import("./Dashboard"));
 const SpotDevice = React.lazy(() => import("./SpotDevice"));
@@ -29,7 +27,7 @@ function App() {
             <Route path="/add-device" element={<AddDevice />} />
             <Route path="/spot-device" element={<SpotDevice />} />
             <Route path="/add-geofence" element={<DrawMap />} />
-            {/* <Route component={NotFound}/> */}
+            
           </Routes>
           </Suspense>
         </Box>
