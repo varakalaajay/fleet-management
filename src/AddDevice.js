@@ -24,7 +24,7 @@ function AddDevice() {
     const addDevice = async () => {
       try {
         const response = await axios.post(
-          "http://174.138.121.17:8001/infinite/add_device",
+          "http://174.138.121.17:8001/infinite/create_device",
           {
             device_id: deviceID,
             type: type,

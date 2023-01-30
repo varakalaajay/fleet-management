@@ -46,11 +46,11 @@ export default function Login() {
 
         localStorage.setItem("token", res.data.x_token);
         localStorage.setItem("user", res.data.x_user);
-        swal({
+        /* swal({
           text: "Successfully Logged-In",
           icon: "success",
           type: "success",
-        });
+        }); */
         navigate("/dashboard");
 
       } catch (err) {

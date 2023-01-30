@@ -162,8 +162,8 @@ function Header() {
                   color="inherit"
                 >
                   <AccountCircle />
-                </IconButton>{/* 
-                <p>{person}</p> */}
+                </IconButton>
+                <p>{person}</p>
               </MenuItem>
              
               <Menu
@@ -244,11 +244,17 @@ function Header() {
                   </ListItemIcon>
                   <ListItemText primary="Dashboard"></ListItemText>
                 </ListItemButton>
+                <ListItemButton to="/vehicle-dashboard" selected={getNavLinkClass("/vehicle-dashboard")}>
+                  <ListItemIcon>
+                    <DirectionsBusFilledIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Vehicle Dashboard" />
+                </ListItemButton>
                 <ListItemButton to="/add-device" selected={getNavLinkClass("/add-device")}>
                   <ListItemIcon>
                     <DirectionsBusFilledIcon />
                   </ListItemIcon>
-                  <ListItemText primary="Device Registration" />
+                  <ListItemText primary="Vehicle Registration" />
                 </ListItemButton>
               <ListItemButton to="/spot-device" selected={getNavLinkClass("/spot-device")}>
                 <ListItemIcon>

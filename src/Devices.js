@@ -36,7 +36,7 @@ function Devices() {
       }
     };
     listDevices();
-  }, [devices]);
+  }, []);
 
   const columns = [
     { field: "device_id", headerName: "Device ID", width: 150 },
@@ -55,7 +55,7 @@ function Devices() {
       }}
     >
       <Typography component="h1" variant="h5">
-        List of Devices
+        List of Vehicles
       </Typography>
       <div style={{ height: 400, width: "100%" }}>
         <DataGrid
