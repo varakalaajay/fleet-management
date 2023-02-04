@@ -28,6 +28,7 @@ import DirectionsBusFilledIcon from "@mui/icons-material/DirectionsBusFilled";
 import RoomIcon from "@mui/icons-material/Room";
 import HouseIcon from "@mui/icons-material/House";
 import MapIcon from "@mui/icons-material/Map";
+import Notifications from "./Notifications";
 
 const drawerWidth = 240;
 
@@ -143,15 +144,7 @@ function Header() {
                 In-Transit Vehicle Tracking System
               </Typography>
               <MenuItem>
-                <IconButton
-                  size="large"
-                  aria-label="show 17 new notifications"
-                  color="inherit"
-                >
-                  <Badge badgeContent={99} color="error">
-                    <NotificationsIcon />
-                  </Badge>
-                </IconButton>
+                <Notifications />
               </MenuItem>
               <MenuItem onClick={handleClick}>
                 <IconButton

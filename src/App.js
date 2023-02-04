@@ -11,6 +11,7 @@ const mdTheme = createTheme();
 const Dashboard = React.lazy(() => import("./Dashboard"));
 const SpotDevice = React.lazy(() => import("./SpotDevice"));
 const AddDevice = React.lazy(() => import("./AddDevice"));
+const VehicleDashboard = React.lazy(() => import("./VehicleDashboard"));
 const Login = React.lazy(() => import("./Login"));
 const DrawMap = React.lazy(() => import("./draw"));
 function App() {
@@ -24,6 +25,7 @@ function App() {
           <Routes>
             <Route exact path="/" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/vehicle-dashboard" element={<VehicleDashboard />} />
             <Route path="/add-device" element={<AddDevice />} />
             <Route path="/spot-device" element={<SpotDevice />} />
             <Route path="/add-geofence" element={<DrawMap />} />

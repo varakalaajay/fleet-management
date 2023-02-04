@@ -53,8 +53,7 @@ const DrawMap = () => {
         "Content-Type": "application/octet-stream",
         "x-token": token,
         "x-user": user,
-      },
-      params: { device_id: "Device03" },
+      }
     });
     setDevices(res.data);
   };
@@ -171,13 +170,10 @@ const DrawMap = () => {
                         );
                       })}
                     </Select>
-                    
                   </FormControl>
-                  <div>
-                    <Button variant="contained" color="success" sx={{ mt: 1 }}>
-                      Submit
-                    </Button>
-                    </div>
+                  <Button variant="contained" color="success" sx={{ mt: 1 }}>
+                    Submit
+                  </Button>
                 </Box>
                 <MapContainer
                   style={{ width: "100%", height: "70vh" }}

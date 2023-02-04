@@ -29,7 +29,6 @@ import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 
 import cities from "./cities.json";
 import axios from "axios";
-import swal from "sweetalert";
 
 const markerIcon = new L.Icon({
   iconUrl: require("./img/marker.png"),
@@ -115,7 +114,8 @@ function SpotDevice() {
   const [devices, setDevices] = useState([]);
   const [location, setLocation] = useState({});
   const [dname, setDname] = useState("");
-  const [zoom, setZoom] = useState("5");
+  const [zoom, setZoom] = useState("14");
+
   const getDevices = async () => {
     const devres = await axios({
       method: "post",
@@ -130,10 +130,10 @@ function SpotDevice() {
   };
   useEffect(() => {
     getDevices();
-  }, []);
+  }, [zoom, dname, center]);
 
   const [position, setPosition] = useState(null);
-  
+
   const handleChange = (e) => {
     e.preventDefault();
     setDname(e.target.value);
@@ -148,12 +148,11 @@ function SpotDevice() {
         },
         params: { device_id: e.target.value, count: 1 },
       });
-      console.log(gpsres.data);
-      setCenter({ lat: gpsres.data.lat, lng: gpsres.data.long });
-      setPosition([gpsres.data.lat, gpsres.data.long]);
-      setLocation({ lat: gpsres.data.lat, lng: gpsres.data.long });
+      setCenter({ lat: gpsres.data[0].lat, lng: gpsres.data[0].long });
+      setPosition([gpsres.data[0].lat, gpsres.data[0].long]);
+      setLocation({ lat: gpsres.data[0].lat, lng: gpsres.data[0].long });
+      setZoom("12");
     };
-    setZoom("12");
     getDeviceLatLng();
   };
 
@@ -208,29 +207,30 @@ function SpotDevice() {
                   </Select>
                 </FormControl>
                 {position === null ? null : (
-                  <div>
+                  <>
                     <Button variant="contained" color="success" sx={{ mt: 1 }}>
                       Active
                     </Button>
-                    <br />
-                    <Button
-                      variant="outlined"
-                      disabled
-                      size="small"
-                      startIcon={<ThumbUpOffAltIcon />}
-                      sx={{ mt: 1, mb: 1, mr: 4, ml: 1 }}
-                    >
-                      Enable
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      size="small"
-                      startIcon={<ThumbDownOffAltIcon />}
-                      sx={{ mt: 1, mb: 1 }}
-                    >
-                      Disable
-                    </Button>
-                  </div>
+                    <div>
+                      <Button
+                        variant="outlined"
+                        disabled
+                        size="small"
+                        startIcon={<ThumbUpOffAltIcon />}
+                        sx={{ mt: 1, mb: 1, mr: 4, ml: 1 }}
+                      >
+                        Enable
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        startIcon={<ThumbDownOffAltIcon />}
+                        sx={{ mt: 1, mb: 1 }}
+                      >
+                        Disable
+                      </Button>
+                    </div>
+                  </>
                 )}
               </Box>
               <MapContainer
