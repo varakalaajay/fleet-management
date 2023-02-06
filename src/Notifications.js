@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { Badge, IconButton } from "@mui/material";
@@ -57,39 +57,40 @@ export default function ScrollDialog() {
     }
   }, [open]);
 
-  const handleRemove = (e) => {
-    e.preventDefault();
-    console.log("clickeddd ", e);
-    /* const delNotification = async () => {
-      try {
-        const delRes = await axios({
-          method: "post",
-          url: "http://174.138.121.17:8001/infinite/delete_dtc",
-          headers: {
-            "Content-Type": "application/octet-stream",
-            "x-token": token,
-            "x-user": user,
-          },
-          params: { device_id: 1, key: "dtc:1:2023-02-01 03:03:34" },
-        });
-
-        swal({
-          text: delRes.data,
-          icon: "success",
-          type: "success",
-        });
-      } catch (err) {
-        if (err.delRes && err.delRes.data && err.delRes.data.errorMessage) {
-          swal({
-            text: err.delRes.data.errorMessage,
-            icon: "error",
-            type: "error",
+  const handleClick = useCallback(
+    (id) => () => {
+      const delNotification = async () => {
+        try {
+          const delRes = await axios({
+            method: "post",
+            url: "http://174.138.121.17:8001/infinite/delete_dtc",
+            headers: {
+              "Content-Type": "application/octet-stream",
+              "x-token": token,
+              "x-user": user,
+            },
+            params: { device_id: 1, key: id },
           });
+
+          swal({
+            text: delRes.data,
+            icon: "success",
+            type: "success",
+          });
+        } catch (err) {
+          if (err.delRes && err.delRes.data && err.delRes.data.errorMessage) {
+            swal({
+              text: err.delRes.data.errorMessage,
+              icon: "error",
+              type: "error",
+            });
+          }
         }
-      }
-    };
-    delNotification(); */
-  };
+      };
+      delNotification();
+    },
+    [messages]
+  );
 
   return (
     <div>
@@ -115,11 +116,16 @@ export default function ScrollDialog() {
               <List dense={true}>
                 {Object.entries(messages).map(([key, val]) => {
                   return (
-                    <ListItem 
+                    <ListItem
                       key={key}
                       secondaryAction={
-                        <IconButton edge="end" aria-label="delete" >
-                          <DeleteIcon onClick={handleRemove}/>
+                        <IconButton
+                          edge="end"
+                          aria-label="delete"
+                          onClick={handleClick(key)}
+                          data-onclickparam={key}
+                        >
+                          <DeleteIcon />
                         </IconButton>
                       }
                     >
