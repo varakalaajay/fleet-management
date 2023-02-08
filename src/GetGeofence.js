@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import L from "leaflet";
-import { MapContainer, TileLayer, FeatureGroup, Polygon } from "react-leaflet";
+import { MapContainer, TileLayer, FeatureGroup } from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
 import osm from "./osm-providers";
 import { useRef } from "react";
@@ -22,7 +22,6 @@ import {
   Select,
 } from "@mui/material";
 
-import swal from "sweetalert";
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
@@ -34,8 +33,8 @@ L.Icon.Default.mergeOptions({
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/images/marker-shadow.png",
 });
 
-const DrawMap = () => {
-  const [center, setCenter] = useState({ lat: 37.350768, lng: -121.889488 });
+const GetGeofence = () => {
+    const [center, setCenter] = useState({ lat: 37.350768, lng: -121.889488 });
   const [mapLayers, setMapLayers] = useState([]);
   const ZOOM_LEVEL = 6;
   const mapRef = useRef();
@@ -45,9 +44,7 @@ const DrawMap = () => {
   const [devices, setDevices] = useState([]);
   const [location, setLocation] = useState({});
   const [position, setPosition] = useState([17.45, 78.38]);
-  const [dname, setDname] = useState("");
-  const [params, setParams] = useState({});
-
+  const [dname, setDname] = useState(null);
   const getDevices = async () => {
     const res = await axios({
       method: "post",
@@ -56,39 +53,13 @@ const DrawMap = () => {
         "Content-Type": "application/octet-stream",
         "x-token": token,
         "x-user": user,
-      },
+      }
     });
     setDevices(res.data);
   };
   useEffect(() => {
     getDevices();
   }, []);
-
-  const handleSubmit = (event) => {
-    const setGeofence = async () => {
-      const res = await axios.post(
-        "http://174.138.121.17:8001/infinite/set_geofence",
-        params,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "x-token": token,
-            "x-user": user,
-          },
-          params: { device_id: event.target.value, ref_id: 3 },
-        }
-      );
-      swal({
-        text: res.data,
-        icon: "success",
-        type: "success",
-      });
-      setDname("");
-      setMapLayers([]);
-    };
-
-    setGeofence();
-  };
 
   const handleChange = (event) => {
     setDname(event.target.value);
@@ -111,22 +82,17 @@ const DrawMap = () => {
   };
 
   const _onCreate = (e) => {
+    console.log(e);
+
     const { layerType, layer } = e;
-
-    const data = layer.getLatLngs()[0];
-    const points = data.reduce((acc, currentValue, currentIndex) => {
-      acc[
-        `point${currentIndex + 1}`
-      ] = `(${currentValue.lat}, ${currentValue.lng})`;
-      return acc;
-    }, {});
-
-    setParams(JSON.stringify(points));
-
+    console.log(layer);
     if (layerType === "polygon") {
       const { _leaflet_id } = layer;
 
-      setMapLayers(points);
+      setMapLayers((layers) => [
+        ...layers,
+        { id: _leaflet_id, latlngs: layer.getLatLngs()[0] },
+      ]);
     }
   };
 
@@ -206,16 +172,11 @@ const DrawMap = () => {
                       })}
                     </Select>
                   </FormControl>
-                  <Button
-                    variant="contained"
-                    color="success"
-                    sx={{ mt: 1 }}
-                    onClick={handleSubmit}
-                  >
+                  <Button variant="contained" color="success" sx={{ mt: 1 }}>
                     Submit
                   </Button>
                 </Box>
-                <MapContainer
+                {dname === null ? null : (<MapContainer
                   style={{ width: "100%", height: "70vh" }}
                   center={center}
                   zoom={ZOOM_LEVEL}
@@ -240,11 +201,10 @@ const DrawMap = () => {
                     url={osm.maptiler.url}
                     attribution={osm.maptiler.attribution}
                   />
-                 
-                </MapContainer>
-                {/* <pre className="text-left">
-                  {JSON.stringify(mapLayers, 0, 2)}
-                </pre> */}
+                </MapContainer>)
+                
+                }
+                
               </Paper>
             </Grid>
           </Grid>
@@ -252,7 +212,7 @@ const DrawMap = () => {
         </Container>
       </Box>
     </>
-  );
-};
+  )
+}
 
-export default DrawMap;
+export default GetGeofence

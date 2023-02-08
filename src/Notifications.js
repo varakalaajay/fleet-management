@@ -21,7 +21,7 @@ export default function ScrollDialog() {
   const token = localStorage.getItem("token");
   const user = localStorage.getItem("user");
 
-  const handleClickOpen = () => () => {
+  const handleClickOpen = () => {
     setOpen(true);
   };
 
@@ -73,10 +73,11 @@ export default function ScrollDialog() {
           });
 
           swal({
-            text: delRes.data,
+            text: "Deleted",
             icon: "success",
             type: "success",
           });
+          getNotifications();
         } catch (err) {
           if (err.delRes && err.delRes.data && err.delRes.data.errorMessage) {
             swal({
@@ -100,7 +101,7 @@ export default function ScrollDialog() {
         color="inherit"
       >
         <Badge color="error">
-          <NotificationsIcon onClick={handleClickOpen()} />
+          <NotificationsIcon onClick={handleClickOpen} />
         </Badge>
       </IconButton>
       <Dialog

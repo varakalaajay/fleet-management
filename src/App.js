@@ -14,6 +14,7 @@ const AddDevice = React.lazy(() => import("./AddDevice"));
 const VehicleDashboard = React.lazy(() => import("./VehicleDashboard"));
 const Login = React.lazy(() => import("./Login"));
 const DrawMap = React.lazy(() => import("./draw"));
+const GetGeofence = React.lazy(() => import("./GetGeofence"));
 function App() {
   return (
     <Router>
@@ -29,6 +30,7 @@ function App() {
             <Route path="/add-device" element={<AddDevice />} />
             <Route path="/spot-device" element={<SpotDevice />} />
             <Route path="/add-geofence" element={<DrawMap />} />
+            <Route path="/get-geofence" element={<GetGeofence />} />
             
           </Routes>
           </Suspense>

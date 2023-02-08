@@ -31,6 +31,7 @@ import cities from "./cities.json";
 import axios from "axios";
 import swal from "sweetalert";
 import LocationMarker from "./LocationMarker";
+import MapView from "./MapView";
 
 const markerIcon = new L.Icon({
   iconUrl: require("./img/marker.png"),
@@ -48,8 +49,8 @@ function SpotDevice() {
   const [devices, setDevices] = useState([]);
   const [location, setLocation] = useState({});
   const [dname, setDname] = useState("");
-  const [zoom, setZoom] = useState("14");
-  const [status, setStatus] = useState(false);
+  const [zoom, setZoom] = useState("5");
+  const [status, setStatus] = useState(true);
 
   const getDevices = async () => {
     const devres = await axios({
@@ -87,7 +88,7 @@ function SpotDevice() {
           },
         }
       );
-      setStatus(true);
+      setStatus(!status);
       swal({
         text: getstatusres.data,
         icon: "success",
@@ -95,13 +96,16 @@ function SpotDevice() {
       });
     };
     setDeviceStatus();
+
   };
 
   const handleChange = useCallback(
     (e) => {
       e.preventDefault();
       setDname(e.target.value);
+      setZoom("14");
       const getDeviceLatLng = async () => {
+
         const gpsres = await axios({
           method: "post",
           url: "http://174.138.121.17:8001/infinite/get_gps",
@@ -115,11 +119,11 @@ function SpotDevice() {
         setCenter({ lat: gpsres.data[0].lat, lng: gpsres.data[0].long });
         setPosition([gpsres.data[0].lat, gpsres.data[0].long]);
         setLocation({ lat: gpsres.data[0].lat, lng: gpsres.data[0].long });
-        setZoom("12");
+        
       };
       getDeviceLatLng();
     },
-    [location]
+    [zoom]
   );
 
   return (
@@ -180,7 +184,7 @@ function SpotDevice() {
                         sx={{ mt: 1 }}
                         onClick={handleStatusChange}
                       >
-                        ACTIVE
+                        ENABLED
                       </Button>
                     ) : (
                       <Button
@@ -189,7 +193,7 @@ function SpotDevice() {
                         sx={{ mt: 1 }}
                         onClick={handleStatusChange}
                       >
-                        INACTIVE
+                        DISABLED
                       </Button>
                     )}
 
@@ -215,7 +219,8 @@ function SpotDevice() {
                   </>
                 )}
               </Box>
-              <MapContainer
+              <MapView center={center} zoom={zoom} location={location} position={position} />
+              {/* <MapContainer
                 style={{ width: "100%", height: "70vh" }}
                 center={center}
                 zoom={zoom}
@@ -244,7 +249,7 @@ function SpotDevice() {
                 ) : (
                   <LocationMarker location={location} />
                 )}
-              </MapContainer>
+              </MapContainer> */}
             </Paper>
           </Grid>
         </Grid>

@@ -11,24 +11,32 @@ const markerIcon = new L.Icon({
 });
 
 function LocationMarker({ location }) {
-  const [position, setPosition] = useState(null);
+  //const [position, setPosition] = useState(null);
   const [bbox, setBbox] = useState([]);
 
   const map = useMap();
+  //map.locate().on("locationfound", function (e) {
+    //setPosition(location);
+    //map.flyTo(location, map.getZoom(14));
+    /* const radius = e.accuracy;
+    const circle = L.circle(location, radius);
+    circle.addTo(map); */
+  //  setBbox(e.bounds.toBBoxString().split(","));
+  //});
 
   useEffect(() => {
     map.locate().on("locationfound", function (e) {
-      setPosition(location);
+      //setPosition(location);
       map.flyTo(location, map.getZoom());
-      const radius = e.accuracy;
-      const circle = L.circle(location, radius);
-      circle.addTo(map);
+      // const radius = e.accuracy;
+      // const circle = L.circle(location, radius);
+      // circle.addTo(map);
       setBbox(e.bounds.toBBoxString().split(","));
     });
-  }, []);
+  }, [location]);
 
-  return position === null ? null : (
-    <Marker position={position} icon={markerIcon}>
+  return location === null ? null : (
+    <Marker position={location} icon={markerIcon}>
       <Popup>
         You are here. <br />
         Map bbox: <br />

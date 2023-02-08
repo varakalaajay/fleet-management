@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material/Container";
@@ -9,15 +9,50 @@ import { Button, TextField, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import swal from "sweetalert";
 import axios from "axios";
-import Devices from "./Devices";
-
+import { DataGrid } from "@mui/x-data-grid";
 
 function AddDevice() {
-  const [deviceID, setDeviceID] = React.useState("");
-  const [type, setType] = React.useState("");
+  const [deviceID, setDeviceID] = useState("");
+  const [type, setType] = useState("");
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const user = localStorage.getItem("user");
+  const [devices, setDevices] = useState([]);
+  const columns = [
+    { field: "device_id", headerName: "Device ID", width: 150 },
+    { field: "type", headerName: "Type", width: 130 },
+    { field: "status", headerName: "Status", width: 130 },
+    { field: "createdAt", headerName: "Created At", width: 160 },
+  ];
+
+  const listDevices = async () => {
+    try {
+      const resp = await axios({
+        method: "post",
+        url: "http://174.138.121.17:8001/infinite/get_devices",
+        headers: {
+          "Content-Type": "application/octet-stream",
+          "x-token": token,
+          "x-user": user,
+        },
+        params: { device_id: "Device03" },
+      });
+
+      setDevices(resp.data);
+    } catch (err) {
+      if (err) {
+        swal({
+          text: err,
+          icon: "error",
+          type: "error",
+        });
+      }
+    }
+  };
+  useEffect(()=>{
+    listDevices();
+
+  },[])
 
   const handleAdd = (event) => {
     event.preventDefault();
@@ -39,12 +74,13 @@ function AddDevice() {
           }
         );
         swal({
-          text: response.data,
+          text: "Vehicle Registered Success",
           icon: "success",
           type: "success",
         });
         setDeviceID("");
         setType("");
+        listDevices();
         navigate("/add-device");
       } catch (err) {
         if (
@@ -64,7 +100,6 @@ function AddDevice() {
     addDevice();
   };
   return (
-
     <Box
       component="main"
       sx={{
@@ -90,7 +125,7 @@ function AddDevice() {
               }}
             >
               <Typography component="h1" variant="h5">
-                Add Device
+                Add Vehicle
               </Typography>
               <Box
                 component="form"
@@ -102,7 +137,7 @@ function AddDevice() {
                   margin="normal"
                   required
                   fullWidth
-                  label="Device ID"
+                  label="Vehicle ID"
                   type="text"
                   id="device_id"
                   name="deviceid"
@@ -130,18 +165,36 @@ function AddDevice() {
                   variant="contained"
                   sx={{ mt: 3, mb: 2 }}
                 >
-                  Register Device
+                  Register Vehicle
                 </Button>
               </Box>
             </Paper>
           </Grid>
           <Grid item xs={7}>
-            <Devices />
+            <Paper
+              sx={{
+                p: 2,
+                display: "flex",
+                flexDirection: "column",
+                height: "350",
+              }}
+            >
+              <Typography component="h1" variant="h5">
+                List of Vehicles
+              </Typography>
+              <div style={{ height: 400, width: "100%" }}>
+                <DataGrid
+                  rows={devices}
+                  columns={columns}
+                  pageSize={5}
+                  rowsPerPageOptions={[5]}
+                />
+              </div>
+            </Paper>
           </Grid>
         </Grid>
       </Container>
     </Box>
-    
   );
 }
 
