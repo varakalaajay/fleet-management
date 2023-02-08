@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   MapContainer,
   Marker,
@@ -29,6 +29,8 @@ import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 
 import cities from "./cities.json";
 import axios from "axios";
+import swal from "sweetalert";
+import LocationMarker from "./LocationMarker";
 
 const markerIcon = new L.Icon({
   iconUrl: require("./img/marker.png"),
@@ -36,74 +38,6 @@ const markerIcon = new L.Icon({
   iconAnchor: [17, 46], //[left/right, top/bottom]
   popupAnchor: [0, -46], //[left/right, top/bottom]
 });
-/* function MyComponent() {
-  const [position, setPosition] = React.useState(null);
-  const map = useMapEvents({
-    click() {
-      map.getCenter();
-    },
-    locationfound(e) {
-      setPosition(e.latlng);
-      map.flyTo(e.latlng, map.getZoom());
-    },
-  });
-  return position === null ? null : (
-    <Marker position={position} icon={markerIcon}>
-      <Popup>
-        You are here
-        <b>Device ID : </b> <br />
-        <b> TimeStamp :</b>
-      </Popup>
-    </Marker>
-  );
-}
-const markers = [{ latitute: "58", longitute: "98" }];
-const CustomMarkers = () => {
-  const map = useMap();
-  return markers.map((el, i) => (
-    <Marker
-      key={i}
-      position={[el.latitude, el.longitude]}
-      icon={markerIcon}
-      eventHandlers={{
-        click: () => {
-          console.log("marker clicked", el);
-          console.log(map.getZoom());
-        },
-      }}
-    />
-  ));
-}; */
-function LocationMarker({ location }) {
-  const [position, setPosition] = useState(null);
-  const [bbox, setBbox] = useState([]);
-
-  const map = useMap();
-
-  useEffect(() => {
-    map.locate().on("locationfound", function (e) {
-      setPosition(location);
-      map.flyTo(location, map.getZoom());
-      const radius = e.accuracy;
-      const circle = L.circle(location, radius);
-      circle.addTo(map);
-      setBbox(e.bounds.toBBoxString().split(","));
-    });
-  }, []);
-
-  return position === null ? null : (
-    <Marker position={position} icon={markerIcon}>
-      <Popup>
-        You are here. <br />
-        Map bbox: <br />
-        <b>Southwest lng</b>: {bbox[0]} <br />
-        <b>Southwest lat</b>: {bbox[1]} <br />
-        <b>Northeast lng</b>: {bbox[2]} <br />
-        <b>Northeast lat</b>: {bbox[3]}
-      </Popup>
-    </Marker>
-  );
-}
 
 function SpotDevice() {
   const [center, setCenter] = useState({ lat: 36.23, lng: -98.38 });
@@ -115,6 +49,7 @@ function SpotDevice() {
   const [location, setLocation] = useState({});
   const [dname, setDname] = useState("");
   const [zoom, setZoom] = useState("14");
+  const [status, setStatus] = useState(false);
 
   const getDevices = async () => {
     const devres = await axios({
@@ -130,31 +65,62 @@ function SpotDevice() {
   };
   useEffect(() => {
     getDevices();
-  }, [zoom, dname, center]);
+  }, []);
 
   const [position, setPosition] = useState(null);
 
-  const handleChange = (e) => {
+  const handleStatusChange = (e) => {
     e.preventDefault();
-    setDname(e.target.value);
-    const getDeviceLatLng = async () => {
-      const gpsres = await axios({
-        method: "post",
-        url: "http://174.138.121.17:8001/infinite/get_gps",
-        headers: {
-          "Content-Type": "application/octet-stream",
-          "x-token": token,
-          "x-user": user,
+    const setDeviceStatus = async () => {
+      const getstatusres = await axios.post(
+        "http://174.138.121.17:8001/infinite/set_device",
+        {
+          device_id: "Device01",
+          type: "TCU",
+          status: "ENABLED",
         },
-        params: { device_id: e.target.value, count: 1 },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "x-token": token,
+            "x-user": user,
+          },
+        }
+      );
+      setStatus(true);
+      swal({
+        text: getstatusres.data,
+        icon: "success",
+        type: "success",
       });
-      setCenter({ lat: gpsres.data[0].lat, lng: gpsres.data[0].long });
-      setPosition([gpsres.data[0].lat, gpsres.data[0].long]);
-      setLocation({ lat: gpsres.data[0].lat, lng: gpsres.data[0].long });
-      setZoom("12");
     };
-    getDeviceLatLng();
+    setDeviceStatus();
   };
+
+  const handleChange = useCallback(
+    (e) => {
+      e.preventDefault();
+      setDname(e.target.value);
+      const getDeviceLatLng = async () => {
+        const gpsres = await axios({
+          method: "post",
+          url: "http://174.138.121.17:8001/infinite/get_gps",
+          headers: {
+            "Content-Type": "application/octet-stream",
+            "x-token": token,
+            "x-user": user,
+          },
+          params: { device_id: e.target.value, count: 1 },
+        });
+        setCenter({ lat: gpsres.data[0].lat, lng: gpsres.data[0].long });
+        setPosition([gpsres.data[0].lat, gpsres.data[0].long]);
+        setLocation({ lat: gpsres.data[0].lat, lng: gpsres.data[0].long });
+        setZoom("12");
+      };
+      getDeviceLatLng();
+    },
+    [location]
+  );
 
   return (
     <Box
@@ -195,12 +161,11 @@ function SpotDevice() {
                     onChange={handleChange}
                   >
                     {devices.map((device) => {
+                      const { device_id, status } = device;
+
                       return (
-                        <MenuItem
-                          value={device.device_id}
-                          key={device.device_id}
-                        >
-                          {device.device_id}
+                        <MenuItem value={device_id} key={device_id}>
+                          {device_id}
                         </MenuItem>
                       );
                     })}
@@ -208,10 +173,27 @@ function SpotDevice() {
                 </FormControl>
                 {position === null ? null : (
                   <>
-                    <Button variant="contained" color="success" sx={{ mt: 1 }}>
-                      Active
-                    </Button>
-                    <div>
+                    {status === true ? (
+                      <Button
+                        variant="contained"
+                        color="success"
+                        sx={{ mt: 1 }}
+                        onClick={handleStatusChange}
+                      >
+                        ACTIVE
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="contained"
+                        color="warning"
+                        sx={{ mt: 1 }}
+                        onClick={handleStatusChange}
+                      >
+                        INACTIVE
+                      </Button>
+                    )}
+
+                    {/* <div>
                       <Button
                         variant="outlined"
                         disabled
@@ -229,7 +211,7 @@ function SpotDevice() {
                       >
                         Disable
                       </Button>
-                    </div>
+                    </div> */}
                   </>
                 )}
               </Box>
@@ -246,23 +228,6 @@ function SpotDevice() {
                   url={osm.maptiler.url}
                   attribution={osm.maptiler.attribution}
                 />
-                {/* <MyComponent /> */}
-
-                {/* <CustomMarkers /> */}
-                {/* <Marker
-                  position={position}
-                  icon={markerIcon}
-                  eventHandlers={{
-                    click: () => {
-                      console.log("marker clicked");
-                    },
-                  }}
-                >
-                  <Popup>
-                    <b>Device ID : {location.device_id} </b> <br />
-                    <b> TimeStamp : {location.timestamp}</b>
-                  </Popup>
-                </Marker> */}
 
                 {position === null ? (
                   cities.map((city, idx) => (
@@ -277,7 +242,7 @@ function SpotDevice() {
                     </Marker>
                   ))
                 ) : (
-                  <LocationMarker location={center} />
+                  <LocationMarker location={location} />
                 )}
               </MapContainer>
             </Paper>

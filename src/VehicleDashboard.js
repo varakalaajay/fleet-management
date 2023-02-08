@@ -8,10 +8,15 @@ import Paper from "@mui/material/Paper";
 import Footer from "./Footer";
 import {
   Button,
+  Card,
+  CardActions,
+  CardContent,
+  Divider,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
+  Typography,
 } from "@mui/material";
 
 import axios from "axios";
@@ -22,6 +27,8 @@ const VehicleDashboard = () => {
   const user = localStorage.getItem("user");
   const [devices, setDevices] = useState([]);
   const [dname, setDname] = useState("");
+  const [gyroscope, setGyroscope] = useState(null);
+  const [accelerometer, setAccelerometer] = useState(null);
 
   useEffect(() => {
     const getDevices = async () => {
@@ -41,77 +48,61 @@ const VehicleDashboard = () => {
 
   /* const [position, setPosition] = useState(null); */
 
-  const handleClick = useCallback(
-    (id) => () => {
-      const getAccelerometer = async () => {
-        try {
-          const acceRes = await axios({
-            method: "post",
-            url: "http://174.138.121.17:8001/infinite/get_accelerometer",
-            headers: {
-              "Content-Type": "application/octet-stream",
-              "x-token": token,
-              "x-user": user,
-            },
-            params: { device_id: id, count: 1 },
-          });
-
+  const handleClick = useCallback((e) => {
+    e.preventDefault();
+    setDname(e.target.value);
+    console.log(e.target.value);
+    const getAccelerometer = async () => {
+      try {
+        const acceRes = await axios({
+          method: "post",
+          url: "http://174.138.121.17:8001/infinite/get_accelerometer",
+          headers: {
+            "Content-Type": "application/octet-stream",
+            "x-token": token,
+            "x-user": user,
+          },
+          params: { device_id: e.target.value, count: 1 },
+        });
+        console.log(acceRes.data[0]);
+        setAccelerometer(acceRes.data[0]);
+      } catch (err) {
+        if (err.acceRes && err.acceRes.data && err.acceRes.data.errorMessage) {
           swal({
-            text: acceRes.data,
-            icon: "success",
-            type: "success",
+            text: err.acceRes.data.errorMessage,
+            icon: "error",
+            type: "error",
           });
-        } catch (err) {
-          if (
-            err.acceRes &&
-            err.acceRes.data &&
-            err.acceRes.data.errorMessage
-          ) {
-            swal({
-              text: err.acceRes.data.errorMessage,
-              icon: "error",
-              type: "error",
-            });
-          }
         }
-      };
-      const getGyroscope = async () => {
-        try {
-          const gyroRes = await axios({
-            method: "post",
-            url: "http://174.138.121.17:8001/infinite/get_gyroscope",
-            headers: {
-              "Content-Type": "application/octet-stream",
-              "x-token": token,
-              "x-user": user,
-            },
-            params: { device_id: id, count: 1 },
-          });
-
+      }
+    };
+    const getGyroscope = async () => {
+      try {
+        const gyroRes = await axios({
+          method: "post",
+          url: "http://174.138.121.17:8001/infinite/get_gyroscope",
+          headers: {
+            "Content-Type": "application/octet-stream",
+            "x-token": token,
+            "x-user": user,
+          },
+          params: { device_id: e.target.value, count: 1 },
+        });
+        console.log(gyroRes.data[0]);
+        setGyroscope(gyroRes.data[0]);
+      } catch (err) {
+        if (err.gyroRes && err.gyroRes.data && err.gyroRes.data.errorMessage) {
           swal({
-            text: gyroRes.data,
-            icon: "success",
-            type: "success",
+            text: err.gyroRes.data.errorMessage,
+            icon: "error",
+            type: "error",
           });
-        } catch (err) {
-          if (
-            err.gyroRes &&
-            err.gyroRes.data &&
-            err.gyroRes.data.errorMessage
-          ) {
-            swal({
-              text: err.gyroRes.data.errorMessage,
-              icon: "error",
-              type: "error",
-            });
-          }
         }
-      };
-      getAccelerometer();
-      getGyroscope();
-    },
-    []
-  );
+      }
+    };
+    getAccelerometer();
+    getGyroscope();
+  }, []);
 
   /* const handleChange = (e) => {
     e.preventDefault();
@@ -168,15 +159,13 @@ const VehicleDashboard = () => {
                     value={dname}
                     label="Select Device"
                     size="small"
-                    onChange={handleClick("Device01")}
-                    
+                    onChange={handleClick}
                   >
                     {devices.map((device) => {
                       return (
                         <MenuItem
                           value={device.device_id}
                           key={device.device_id}
-                          
                         >
                           {device.device_id}
                         </MenuItem>
@@ -184,6 +173,44 @@ const VehicleDashboard = () => {
                     })}
                   </Select>
                 </FormControl>
+                {accelerometer == null ? null : (
+                  <Card sx={{ minWidth: 275 }}>
+                    <CardContent>
+                      <Typography variant="h4" component="div">
+                        Accelerometer
+                      </Typography>
+
+                      <Typography variant="h5" component="div">
+                        X - axis : {accelerometer[`x-axis`]} <br />Y - axis :{" "}
+                        {accelerometer[`y-axis`]} <br />Z - axis :{" "}
+                        {accelerometer[`z-axis`]}
+                      </Typography>
+
+                      <Typography variant="body2">
+                        TimeStamp : {accelerometer[`ts`]}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                )}
+                <Divider />
+                {gyroscope == null ? null : (
+                  <Card sx={{ minWidth: 275 }}>
+                    <CardContent>
+                      <Typography variant="h4" component="div">
+                        Gyroscope
+                      </Typography>
+                      <Typography variant="h5" component="div">
+                        X - axis : {gyroscope[`x-axis`]} <br />Y - axis :{" "}
+                        {gyroscope[`y-axis`]} <br />Z - axis :{" "}
+                        {gyroscope[`z-axis`]}
+                      </Typography>
+
+                      <Typography variant="body2">
+                        TimeStamp : {gyroscope[`ts`]}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                )}
               </Box>
             </Paper>
           </Grid>

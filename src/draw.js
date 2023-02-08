@@ -85,6 +85,7 @@ const DrawMap = () => {
     console.log(e);
 
     const { layerType, layer } = e;
+    console.log(layer);
     if (layerType === "polygon") {
       const { _leaflet_id } = layer;
 
