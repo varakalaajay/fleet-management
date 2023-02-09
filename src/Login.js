@@ -51,7 +51,15 @@ export default function Login() {
           icon: "success",
           type: "success",
         }); */
-        navigate("/dashboard");
+        if (res.data.status === "200") {
+          navigate("/dashboard");          
+        } else {
+          swal({
+            text: "Incorrect Email/Password",
+            icon: "error",
+            type: "error",
+          });
+        }
 
       } catch (err) {
         if (
