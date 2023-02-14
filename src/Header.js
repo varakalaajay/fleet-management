@@ -261,12 +261,12 @@ function Header() {
                 </ListItemIcon>
                 <ListItemText primary="Set Geo Fence" />
               </ListItemButton>
-              {/* <ListItemButton to="/get-geofence" selected={getNavLinkClass("/get-geofence")}>
+              <ListItemButton to="/get-geofence" selected={getNavLinkClass("/get-geofence")}>
                 <ListItemIcon>
                   <MapIcon />
                 </ListItemIcon>
                 <ListItemText primary="Get Geo Fence" />
-              </ListItemButton> */}
+              </ListItemButton>
               <ListItemButton onClick={logOut}>
                 <ListItemIcon>
                   <LogoutIcon />

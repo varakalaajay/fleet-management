@@ -65,6 +65,7 @@ const DrawMap = () => {
   }, []);
 
   const handleSubmit = (event) => {
+    console.log(event.target.value);
     const setGeofence = async () => {
       const res = await axios.post(
         "http://174.138.121.17:8001/infinite/set_geofence",
@@ -75,7 +76,7 @@ const DrawMap = () => {
             "x-token": token,
             "x-user": user,
           },
-          params: { device_id: event.target.value, ref_id: 3 },
+          params: { device_id: dname, ref_id: 3 },
         }
       );
       swal({

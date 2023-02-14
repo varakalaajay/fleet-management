@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import L from "leaflet";
-import { MapContainer, TileLayer, FeatureGroup } from "react-leaflet";
+import { MapContainer, TileLayer, FeatureGroup, Polygon } from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
 import osm from "./osm-providers";
 import { useRef } from "react";
@@ -33,8 +33,22 @@ L.Icon.Default.mergeOptions({
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/images/marker-shadow.png",
 });
 
+/* var map = L.map('map').setView([51.505, -0.09], 13);
+     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+     }).addTo(map);
+     // FeatureGroup is to store editable layers
+     var drawnItems = new L.FeatureGroup();
+     map.addLayer(drawnItems);
+     var drawControl = new L.Control.Draw({
+         edit: {
+             featureGroup: drawnItems
+         }
+     });
+     map.addControl(drawControl); */
+
 const GetGeofence = () => {
-    const [center, setCenter] = useState({ lat: 37.350768, lng: -121.889488 });
+  const [center, setCenter] = useState({ lat: 37.350768, lng: -121.889488 });
   const [mapLayers, setMapLayers] = useState([]);
   const ZOOM_LEVEL = 6;
   const mapRef = useRef();
@@ -45,6 +59,34 @@ const GetGeofence = () => {
   const [location, setLocation] = useState({});
   const [position, setPosition] = useState([17.45, 78.38]);
   const [dname, setDname] = useState(null);
+
+
+  const [polygons, setPolygons] = useState([]);
+
+  const onEdited = (layers) => {
+    //polygons that are changed are stored in changedPolys array
+    const changedPolys = Object.values(layers._layers).map((layer) => {
+      const latlngs = layer._latlngs[0].map((latlng) => {
+        return [latlng.lat, latlng.lng];
+      });
+      return { id: layer.options.id, latlngs: latlngs };
+    });
+    
+    console.log(changedPolys);
+    debugger;
+    //update state of all the polygons. replace polygons with changedPolys
+    changedPolys.forEach((changedPoly) => {
+      setPolygons((polygons) => {
+        return polygons.map((polygon) => {
+          if (polygon.id === changedPoly.id) {
+            return { id: changedPoly.id, latlngs: changedPoly.latlngs };
+          }          
+          return polygon;
+        });
+      });
+    });
+  };
+
   const getDevices = async () => {
     const res = await axios({
       method: "post",
@@ -53,7 +95,7 @@ const GetGeofence = () => {
         "Content-Type": "application/octet-stream",
         "x-token": token,
         "x-user": user,
-      }
+      },
     });
     setDevices(res.data);
   };
@@ -63,10 +105,10 @@ const GetGeofence = () => {
 
   const handleChange = (event) => {
     setDname(event.target.value);
-    const getDeviceLatLng = async () => {
-      const res = await axios({
+    const getGeofenceLatLng = async () => {
+      const { data } = await axios({
         method: "post",
-        url: "http://174.138.121.17:8001/infinite/get_gps",
+        url: "http://174.138.121.17:8001/infinite/get_geofence",
         headers: {
           "Content-Type": "application/octet-stream",
           "x-token": token,
@@ -74,11 +116,16 @@ const GetGeofence = () => {
         },
         params: { device_id: event.target.value },
       });
-      setCenter({ lat: res.data.lat, lng: res.data.long });
-      setPosition([res.data.lat, res.data.long]);
-      setLocation(res.data);
+      const result = Object.values(data).map((coords) => {
+        return coords.slice(1, -1).split(", ").map(Number);
+      });
+
+      setPolygons([{
+        id: 1,
+        latlngs: result,
+      }]);
     };
-    getDeviceLatLng();
+    getGeofenceLatLng();
   };
 
   const _onCreate = (e) => {
@@ -165,54 +212,73 @@ const GetGeofence = () => {
                     >
                       {devices.map((device) => {
                         return (
-                          <MenuItem value={device.device_id}>
+                          <MenuItem
+                            value={device.device_id}
+                            key={device.device_id}
+                          >
                             {device.device_id}
                           </MenuItem>
                         );
                       })}
                     </Select>
                   </FormControl>
-                  <Button variant="contained" color="success" sx={{ mt: 1 }}>
+                 {/*  <Button variant="contained" color="success" sx={{ mt: 1 }}>
                     Submit
-                  </Button>
+                  </Button> */}
                 </Box>
-                {dname === null ? null : (<MapContainer
-                  style={{ width: "100%", height: "70vh" }}
-                  center={center}
-                  zoom={ZOOM_LEVEL}
-                  ref={mapRef}
-                >
-                  <FeatureGroup>
-                    <EditControl
-                      position="topright"
-                      onCreated={_onCreate}
-                      onEdited={_onEdited}
-                      onDeleted={_onDeleted}
-                      draw={{
-                        rectangle: false,
-                        polyline: false,
-                        circle: false,
-                        circlemarker: false,
-                        marker: false,
-                      }}
+
+                {dname === null ? null : (
+                  <MapContainer
+                    style={{ width: "100%", height: "70vh" }}
+                    center={center}
+                    zoom={ZOOM_LEVEL}
+                    ref={mapRef}
+                  >
+                    <FeatureGroup>
+                      <EditControl
+                        position="topright"
+                        onCreated={_onCreate}
+                        onEdited={(e) => onEdited(e.layers)}
+                        onDeleted={_onDeleted}
+                        draw={{
+                          rectangle: false,
+                          polyline: false,
+                          circle: false,
+                          circlemarker: false,
+                          marker: false,
+                        }}
+                      />
+
+                      {polygons?.map((polygon) => {
+                        return (
+                          <Polygon
+                            key={polygon.id}
+                            id={polygon.id}
+                            positions={polygon.latlngs}
+                            pathOptions={{
+                              color: polygon.id === 1 ? "red" : "blue",
+                            }}
+                          />
+                        );
+                      })}
+                    </FeatureGroup>
+                    <TileLayer
+                      url={osm.maptiler.url}
+                      attribution={osm.maptiler.attribution}
                     />
-                  </FeatureGroup>
-                  <TileLayer
-                    url={osm.maptiler.url}
-                    attribution={osm.maptiler.attribution}
-                  />
-                </MapContainer>)
-                
-                }
-                
+                  </MapContainer>
+                )}
               </Paper>
+              {/* <pre className="text-left">
+                  {JSON.stringify(mapLayers, 0, 2)}
+                </pre> */}
             </Grid>
           </Grid>
           <Footer sx={{ pt: 4 }} />
         </Container>
       </Box>
     </>
-  )
-}
+  );
+};
 
-export default GetGeofence
+export default GetGeofence;
