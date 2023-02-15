@@ -73,12 +73,13 @@ function SpotDevice() {
   const handleStatusChange = (e) => {
     e.preventDefault();
     const setDeviceStatus = async () => {
+      const getStatus = status === true ? "DISABLED" : "ENABLED";
       const getstatusres = await axios.post(
         "http://174.138.121.17:8001/infinite/set_device",
         {
           device_id: "Device01",
           type: "TCU",
-          status: "ENABLED",
+          status: getStatus ,
         },
         {
           headers: {
@@ -96,7 +97,6 @@ function SpotDevice() {
       });
     };
     setDeviceStatus();
-
   };
 
   const handleChange = useCallback(
@@ -105,7 +105,6 @@ function SpotDevice() {
       setDname(e.target.value);
       setZoom("14");
       const getDeviceLatLng = async () => {
-
         const gpsres = await axios({
           method: "post",
           url: "http://174.138.121.17:8001/infinite/get_gps",
@@ -119,7 +118,6 @@ function SpotDevice() {
         setCenter({ lat: gpsres.data[0].lat, lng: gpsres.data[0].long });
         setPosition([gpsres.data[0].lat, gpsres.data[0].long]);
         setLocation({ lat: gpsres.data[0].lat, lng: gpsres.data[0].long });
-        
       };
       getDeviceLatLng();
     },
@@ -178,6 +176,11 @@ function SpotDevice() {
                 {position === null ? null : (
                   <>
                     {status === true ? (
+                      <span style={{ margin: "10px" }}> Status: Active</span>
+                    ) : (
+                      <span style={{ margin: "10px" }}>Status: Deactive</span>
+                    )}
+                    {status === false ? (
                       <Button
                         variant="contained"
                         color="success"
@@ -189,7 +192,7 @@ function SpotDevice() {
                     ) : (
                       <Button
                         variant="contained"
-                        color="warning"
+                        color="error"
                         sx={{ mt: 1 }}
                         onClick={handleStatusChange}
                       >
@@ -219,7 +222,12 @@ function SpotDevice() {
                   </>
                 )}
               </Box>
-              <MapView center={center} zoom={zoom} location={location} position={position} />
+              <MapView
+                center={center}
+                zoom={zoom}
+                location={location}
+                position={position}
+              />
               {/* <MapContainer
                 style={{ width: "100%", height: "70vh" }}
                 center={center}
