@@ -133,19 +133,19 @@ const DrawMap = () => {
 
   const _onEdited = (e) => {
     console.log(e);
-    const {
-      layers: { _layers },
-    } = e;
+    const { layerType, layer } = e;
 
-    Object.values(_layers).map(({ _leaflet_id, editing }) => {
-      setMapLayers((layers) =>
-        layers.map((l) =>
-          l.id === _leaflet_id
-            ? { ...l, latlngs: { ...editing.latlngs[0] } }
-            : l
-        )
-      );
-    });
+    const data = layer.getLatLngs()[0];
+    const points = data.reduce((acc, currentValue, currentIndex) => {
+      acc[
+        `point${currentIndex + 1}`
+      ] = `(${currentValue.lat}, ${currentValue.lng})`;
+      return acc;
+    }, {});
+
+    setParams(JSON.stringify(points));
+
+    setMapLayers(points);
   };
 
   const _onDeleted = (e) => {
@@ -226,8 +226,6 @@ const DrawMap = () => {
                     <EditControl
                       position="topright"
                       onCreated={_onCreate}
-                      onEdited={_onEdited}
-                      onDeleted={_onDeleted}
                       draw={{
                         rectangle: false,
                         polyline: false,

@@ -187,7 +187,7 @@ function SpotDevice() {
                         sx={{ mt: 1 }}
                         onClick={handleStatusChange}
                       >
-                        ENABLED
+                        ENABLE
                       </Button>
                     ) : (
                       <Button
@@ -196,7 +196,7 @@ function SpotDevice() {
                         sx={{ mt: 1 }}
                         onClick={handleStatusChange}
                       >
-                        DISABLED
+                        DISABLE
                       </Button>
                     )}
 
