@@ -22,7 +22,6 @@ const markerIcon = new L.Icon({
 const MapView = (props) => {
     const { center, zoom, location, position } = props;
     const mapRef = useRef();
-    console.log(zoom);
 
   return (
     <>
