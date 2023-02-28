@@ -100,8 +100,7 @@ function Header() {
 
   const getNavLinkClass = (path) => {
     return location.pathname === path ? true : false;
-  }; 
-  
+  };
 
   return (
     <>
@@ -158,7 +157,7 @@ function Header() {
                 </IconButton>
                 <p>{person}</p>
               </MenuItem>
-             
+
               <Menu
                 anchorEl={anchorEl}
                 id="account-menu"
@@ -194,10 +193,10 @@ function Header() {
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
               >
-                <MenuItem>
+                {/* <MenuItem>
                   <Avatar /> {person}
-                </MenuItem>
-                <MenuItem>
+                </MenuItem> */}
+                {/*  <MenuItem>
                   <Avatar /> My account
                 </MenuItem>
                 <Divider />
@@ -206,7 +205,7 @@ function Header() {
                     <Settings fontSize="small" />
                   </ListItemIcon>
                   Settings
-                </MenuItem>
+                </MenuItem> */}
                 <MenuItem onClick={logOut}>
                   <ListItemIcon>
                     <Logout fontSize="small" />
@@ -231,37 +230,66 @@ function Header() {
             </Toolbar>
             <Divider />
             <List component="nav">
-                <ListItemButton to="/dashboard" selected={getNavLinkClass("/dashboard")}>
-                  <ListItemIcon>
-                    <HouseIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Dashboard"></ListItemText>
-                </ListItemButton>
-                <ListItemButton to="/vehicle-dashboard" selected={getNavLinkClass("/vehicle-dashboard")}>
-                  <ListItemIcon>
-                    <DirectionsBusFilledIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Vehicle Dashboard" />
-                </ListItemButton>
-                <ListItemButton to="/add-device" selected={getNavLinkClass("/add-device")}>
-                  <ListItemIcon>
-                    <DirectionsBusFilledIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Vehicle Registration" />
-                </ListItemButton>
-              <ListItemButton to="/spot-device" selected={getNavLinkClass("/spot-device")}>
+              <ListItemButton
+                to="/dashboard"
+                selected={getNavLinkClass("/dashboard")}
+              >
+                <ListItemIcon>
+                  <HouseIcon />
+                </ListItemIcon>
+                <ListItemText primary="Dashboard"></ListItemText>
+              </ListItemButton>
+
+              <ListItemButton
+                to="/livetracking"
+                selected={getNavLinkClass("/livetracking")}
+              >
+                <ListItemIcon>
+                  <RoomIcon />
+                </ListItemIcon>
+                <ListItemText primary="Live Tracking"></ListItemText>
+              </ListItemButton>
+
+              <ListItemButton
+                to="/vehicle-dashboard"
+                selected={getNavLinkClass("/vehicle-dashboard")}
+              >
+                <ListItemIcon>
+                  <DirectionsBusFilledIcon />
+                </ListItemIcon>
+                <ListItemText primary="Vehicle Dashboard" />
+              </ListItemButton>
+              <ListItemButton
+                to="/add-device"
+                selected={getNavLinkClass("/add-device")}
+              >
+                <ListItemIcon>
+                  <DirectionsBusFilledIcon />
+                </ListItemIcon>
+                <ListItemText primary="Vehicle Registration" />
+              </ListItemButton>
+              <ListItemButton
+                to="/spot-device"
+                selected={getNavLinkClass("/spot-device")}
+              >
                 <ListItemIcon>
                   <RoomIcon />
                 </ListItemIcon>
                 <ListItemText primary="Spot Device" />
               </ListItemButton>
-              <ListItemButton to="/add-geofence" selected={getNavLinkClass("/add-geofence")}>
+              <ListItemButton
+                to="/add-geofence"
+                selected={getNavLinkClass("/add-geofence")}
+              >
                 <ListItemIcon>
                   <MapIcon />
                 </ListItemIcon>
                 <ListItemText primary="Set Geo Fence" />
               </ListItemButton>
-              <ListItemButton to="/get-geofence" selected={getNavLinkClass("/get-geofence")}>
+              <ListItemButton
+                to="/get-geofence"
+                selected={getNavLinkClass("/get-geofence")}
+              >
                 <ListItemIcon>
                   <MapIcon />
                 </ListItemIcon>

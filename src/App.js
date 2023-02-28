@@ -10,6 +10,7 @@ import { Box } from "@mui/material";
 const mdTheme = createTheme();
 const Dashboard = React.lazy(() => import("./Dashboard"));
 const SpotDevice = React.lazy(() => import("./SpotDevice"));
+const LiveTracking = React.lazy(() => import("./components/LiveTracking"));
 const AddDevice = React.lazy(() => import("./AddDevice"));
 const VehicleDashboard = React.lazy(() => import("./VehicleDashboard"));
 const Login = React.lazy(() => import("./Login"));
@@ -31,6 +32,7 @@ function App() {
             <Route path="/spot-device" element={<SpotDevice />} />
             <Route path="/add-geofence" element={<DrawMap />} />
             <Route path="/get-geofence" element={<GetGeofence />} />
+            <Route path="/livetracking" element={<LiveTracking />} />
             
           </Routes>
           </Suspense>

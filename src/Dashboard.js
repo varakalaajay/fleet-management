@@ -8,6 +8,7 @@ import img2 from "./img/dashboard.png";
 import { useMap } from "react-leaflet/hooks";
 import { MapContainer } from "react-leaflet/MapContainer";
 import "leaflet/dist/leaflet.css";
+import "leaflet/dist/leaflet.js";
 import osm from "./osm-providers";
 import L from "leaflet";
 import {
@@ -18,6 +19,9 @@ import {
   useMapEvents,
   ZoomControl,
 } from "react-leaflet";
+import PageOne from "./pages/PageOne";
+import LiveTrackingMap from "./pages/PageTwo";
+import LiveTracking from "./components/LiveTracking";
 
 function MyComponent() {
   const markerIcon = new L.Icon({
@@ -88,6 +92,21 @@ const Dashboard = () => {
             
           </MapContainer>
         </Grid> */}
+        {/* <Grid
+          container
+          spacing={3}>          
+          <PageOne />
+          </Grid> */}
+        {/* <Grid
+          container
+          spacing={3}>          
+          <LiveTracking />
+          </Grid>
+        <Grid
+          container
+          spacing={3}>          
+          <LiveTrackingMap />
+          </Grid> */}
         <Grid
           container
           spacing={3}
