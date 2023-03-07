@@ -15,7 +15,7 @@ function Devices() {
       try {
         const resp = await axios({
           method: "post",
-          url: "http://174.138.121.17:8001/infinite/get_devices",
+          url: "http://54.226.199.64:8001/infinite/get_devices",
           headers: {
             "Content-Type": "application/octet-stream",
             "x-token": token,

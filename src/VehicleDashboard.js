@@ -34,7 +34,7 @@ const VehicleDashboard = () => {
     const getDevices = async () => {
       const devres = await axios({
         method: "post",
-        url: "http://174.138.121.17:8001/infinite/get_devices",
+        url: "http://54.226.199.64:8001/infinite/get_devices",
         headers: {
           "Content-Type": "application/octet-stream",
           "x-token": token,
@@ -56,7 +56,7 @@ const VehicleDashboard = () => {
       try {
         const acceRes = await axios({
           method: "post",
-          url: "http://174.138.121.17:8001/infinite/get_accelerometer",
+          url: "http://54.226.199.64:8001/infinite/get_accelerometer",
           headers: {
             "Content-Type": "application/octet-stream",
             "x-token": token,
@@ -80,7 +80,7 @@ const VehicleDashboard = () => {
       try {
         const gyroRes = await axios({
           method: "post",
-          url: "http://174.138.121.17:8001/infinite/get_gyroscope",
+          url: "http://54.226.199.64:8001/infinite/get_gyroscope",
           headers: {
             "Content-Type": "application/octet-stream",
             "x-token": token,
@@ -110,7 +110,7 @@ const VehicleDashboard = () => {
      const getDeviceLatLng = async () => {
       const gpsres = await axios({
         method: "post",
-        url: "http://174.138.121.17:8001/infinite/get_gps",
+        url: "http://54.226.199.64:8001/infinite/get_gps",
         headers: {
           "Content-Type": "application/octet-stream",
           "x-token": token,

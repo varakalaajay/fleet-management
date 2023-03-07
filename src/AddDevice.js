@@ -29,7 +29,7 @@ function AddDevice() {
     try {
       const resp = await axios({
         method: "post",
-        url: "http://174.138.121.17:8001/infinite/get_devices",
+        url: "http://54.226.199.64:8001/infinite/get_devices",
         headers: {
           "Content-Type": "application/octet-stream",
           "x-token": token,
@@ -59,7 +59,7 @@ function AddDevice() {
     const addDevice = async () => {
       try {
         const response = await axios.post(
-          "http://174.138.121.17:8001/infinite/create_device",
+          "http://54.226.199.64:8001/infinite/create_device",
           {
             device_id: deviceID,
             type: type,

@@ -36,7 +36,7 @@ export default function ScrollDialog() {
   const getNotifications = async () => {
     const getRes = await axios({
       method: "post",
-      url: "http://174.138.121.17:8001/infinite/get_dtc",
+      url: "http://54.226.199.64:8001/infinite/get_dtc",
       headers: {
         "Content-Type": "application/octet-stream",
         "x-token": token,
@@ -63,7 +63,7 @@ export default function ScrollDialog() {
         try {
           const delRes = await axios({
             method: "post",
-            url: "http://174.138.121.17:8001/infinite/delete_dtc",
+            url: "http://54.226.199.64:8001/infinite/delete_dtc",
             headers: {
               "Content-Type": "application/octet-stream",
               "x-token": token,

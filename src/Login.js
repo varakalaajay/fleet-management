@@ -37,7 +37,7 @@ export default function Login() {
     const getLogin = async () => {
       try {
         const res = await axios.post(
-          "http://174.138.121.17:8001/infinite/try_login",
+          "http://54.226.199.64:8001/infinite/try_login",
           {
             email: email,
             password: password,

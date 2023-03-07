@@ -55,7 +55,7 @@ function SpotDevice() {
   const getDevices = async () => {
     const devres = await axios({
       method: "post",
-      url: "http://174.138.121.17:8001/infinite/get_devices",
+      url: "http://54.226.199.64:8001/infinite/get_devices",
       headers: {
         "Content-Type": "application/octet-stream",
         "x-token": token,
@@ -75,7 +75,7 @@ function SpotDevice() {
     const setDeviceStatus = async () => {
       const getStatus = status === true ? "DISABLED" : "ENABLED";
       const getstatusres = await axios.post(
-        "http://174.138.121.17:8001/infinite/set_device",
+        "http://54.226.199.64:8001/infinite/set_device",
         {
           device_id: "Device01",
           type: "TCU",
@@ -107,7 +107,7 @@ function SpotDevice() {
       const getDeviceLatLng = async () => {
         const gpsres = await axios({
           method: "post",
-          url: "http://174.138.121.17:8001/infinite/get_gps",
+          url: "http://54.226.199.64:8001/infinite/get_gps",
           headers: {
             "Content-Type": "application/octet-stream",
             "x-token": token,

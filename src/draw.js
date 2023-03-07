@@ -51,7 +51,7 @@ const DrawMap = () => {
   const getDevices = async () => {
     const res = await axios({
       method: "post",
-      url: "http://174.138.121.17:8001/infinite/get_devices",
+      url: "http://54.226.199.64:8001/infinite/get_devices",
       headers: {
         "Content-Type": "application/octet-stream",
         "x-token": token,
@@ -68,7 +68,7 @@ const DrawMap = () => {
     console.log(event.target.value);
     const setGeofence = async () => {
       const res = await axios.post(
-        "http://174.138.121.17:8001/infinite/set_geofence",
+        "http://54.226.199.64:8001/infinite/set_geofence",
         params,
         {
           headers: {
@@ -96,7 +96,7 @@ const DrawMap = () => {
     const getDeviceLatLng = async () => {
       const res = await axios({
         method: "post",
-        url: "http://174.138.121.17:8001/infinite/get_gps",
+        url: "http://54.226.199.64:8001/infinite/get_gps",
         headers: {
           "Content-Type": "application/octet-stream",
           "x-token": token,

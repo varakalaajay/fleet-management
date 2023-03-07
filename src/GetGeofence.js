@@ -90,7 +90,7 @@ const GetGeofence = () => {
   const getDevices = async () => {
     const res = await axios({
       method: "post",
-      url: "http://174.138.121.17:8001/infinite/get_devices",
+      url: "http://54.226.199.64:8001/infinite/get_devices",
       headers: {
         "Content-Type": "application/octet-stream",
         "x-token": token,
@@ -108,7 +108,7 @@ const GetGeofence = () => {
     const getGeofenceLatLng = async () => {
       const { data } = await axios({
         method: "post",
-        url: "http://174.138.121.17:8001/infinite/get_geofence",
+        url: "http://54.226.199.64:8001/infinite/get_geofence",
         headers: {
           "Content-Type": "application/octet-stream",
           "x-token": token,
