@@ -8,6 +8,7 @@ import {
   useMap,
 } from "react-leaflet";
 import L from "leaflet";
+import "leaflet/dist/leaflet.js";
 import "leaflet/dist/leaflet.css";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -32,6 +33,7 @@ import axios from "axios";
 import swal from "sweetalert";
 import LocationMarker from "./LocationMarker";
 import MapView from "./MapView";
+import AirplaneMarker from "./components/AirplaneMarker";
 
 const markerIcon = new L.Icon({
   iconUrl: require("./img/marker.png"),
@@ -51,7 +53,7 @@ function SpotDevice() {
   const [dname, setDname] = useState("");
   const [zoom, setZoom] = useState("5");
   const [status, setStatus] = useState(true);
-
+  const [breach, setBreach] = useState(null);
   const getDevices = async () => {
     const devres = await axios({
       method: "post",
@@ -77,9 +79,9 @@ function SpotDevice() {
       const getstatusres = await axios.post(
         "http://54.226.199.64:8001/infinite/set_device",
         {
-          device_id: "Device01",
+          device_id: dname,
           type: "TCU",
-          status: getStatus ,
+          status: getStatus,
         },
         {
           headers: {
@@ -99,30 +101,27 @@ function SpotDevice() {
     setDeviceStatus();
   };
 
-  const handleChange = useCallback(
-    (e) => {
-      e.preventDefault();
-      setDname(e.target.value);
-      setZoom("14");
-      const getDeviceLatLng = async () => {
-        const gpsres = await axios({
-          method: "post",
-          url: "http://54.226.199.64:8001/infinite/get_gps",
-          headers: {
-            "Content-Type": "application/octet-stream",
-            "x-token": token,
-            "x-user": user,
-          },
-          params: { device_id: e.target.value, count: 1 },
-        });
-        setCenter({ lat: gpsres.data[0].lat, lng: gpsres.data[0].long });
-        setPosition([gpsres.data[0].lat, gpsres.data[0].long]);
-        setLocation({ lat: gpsres.data[0].lat, lng: gpsres.data[0].long });
-      };
-      getDeviceLatLng();
-    },
-    [zoom]
-  );
+  const handleChange = useCallback((e) => {
+    e.preventDefault();
+    setDname(e.target.value);
+    setZoom("14");
+    const getDeviceLatLng = async () => {
+      const gpsres = await axios({
+        method: "post",
+        url: "http://54.226.199.64:8001/infinite/get_gps",
+        headers: {
+          "Content-Type": "application/octet-stream",
+          "x-token": token,
+          "x-user": user,
+        },
+        params: { device_id: e.target.value, count: 1 },
+      });
+      setCenter({ lat: gpsres.data[0].lat, lng: gpsres.data[0].long });
+      setPosition([gpsres.data[0].lat, gpsres.data[0].long]);
+      setLocation({ lat: gpsres.data[0].lat, lng: gpsres.data[0].long });
+    };
+    getDeviceLatLng();
+  }, []);
 
   return (
     <Box
@@ -222,13 +221,15 @@ function SpotDevice() {
                   </>
                 )}
               </Box>
+              {/*{" "}
               <MapView
                 center={center}
                 zoom={zoom}
                 location={location}
                 position={position}
-              />
-              {/* <MapContainer
+              />{" "}
+              */}
+              <MapContainer
                 style={{ width: "100%", height: "70vh" }}
                 center={center}
                 zoom={zoom}
@@ -255,9 +256,9 @@ function SpotDevice() {
                     </Marker>
                   ))
                 ) : (
-                  <LocationMarker location={location} />
+                  <AirplaneMarker data={location ?? {}} />
                 )}
-              </MapContainer> */}
+              </MapContainer>
             </Paper>
           </Grid>
         </Grid>

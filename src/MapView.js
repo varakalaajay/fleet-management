@@ -11,6 +11,7 @@ import "leaflet/dist/leaflet.css";
 
 import cities from "./cities.json";
 import LocationMarker from "./LocationMarker";
+import AirplaneMarker from "./components/AirplaneMarker";
 
 const markerIcon = new L.Icon({
   iconUrl: require("./img/marker.png"),
@@ -48,7 +49,8 @@ const MapView = (props) => {
             </Marker>
           ))
         ) : (
-          <LocationMarker location={location} />
+          /* <LocationMarker location={location} /> */
+          <AirplaneMarker data={location ?? {}} />
         )}
       </MapContainer>
     </>

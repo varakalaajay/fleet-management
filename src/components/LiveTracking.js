@@ -1,45 +1,19 @@
 import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Polyline } from "react-leaflet";
 import AirplaneMarker from "./AirplaneMarker";
-import geopoints from "../../src/geo-locations.json";
-import newGeoPoints from "../../src/newpoints.json";
 import "leaflet/dist/leaflet.css";
 import "leaflet/dist/leaflet.js";
 import { Box, Grid, Paper, Toolbar } from "@mui/material";
 import axios from "axios";
 import { Container } from "@mui/system";
 
-const dataStory = [
-  {
-    lat: 53.22376666666667,
-    lng: 50.745841666666664,
-  },
-  {
-    lat: 53.22376666666667,
-    lng: 50.745841666666664,
-  },
-  {
-    lat: 53.223728333333334,
-    lng: 50.74598666666667,
-  },
-  {
-    lat: 53.223705,
-    lng: 50.746021666666664,
-  },
-  {
-    lat: 53.22365166666667,
-    lng: 50.746075,
-  },
-];
-
 let cursor = 0;
 export default function LiveTracking() {
-  const [currentTrack, setCurrentTrack] = useState({});
+  const [currentTrack, setCurrentTrack] = useState({lat: 40.2974883, lng: -82.2067383});
   const [breach, setBreach] = useState(null);
   const token = localStorage.getItem("token");
   const user = localStorage.getItem("user");
   useEffect(() => {
-    setCurrentTrack(geopoints[cursor]);
 
     const interval = setInterval(() => {
       const getDeviceLatLng = async () => {
@@ -115,7 +89,7 @@ export default function LiveTracking() {
               > 
                 <MapContainer
                   style={{ height: "calc(100vh - 52px)" }}
-                  center={[22.2974883, 73.2067383]}
+                  center={[40.2974883, -82.2067383]}
                   zoom={17}
                   minZoom={5}
                 >
