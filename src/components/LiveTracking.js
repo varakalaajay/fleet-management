@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Polyline } from "react-leaflet";
 import AirplaneMarker from "./AirplaneMarker";
 import "leaflet/dist/leaflet.css";
 import "leaflet/dist/leaflet.js";
-import { Box, Grid, Paper, Toolbar } from "@mui/material";
+import { Box, FormControl, Grid, InputLabel, MenuItem, Paper, Select, Toolbar } from "@mui/material";
 import axios from "axios";
 import { Container } from "@mui/system";
 
@@ -13,8 +13,24 @@ export default function LiveTracking() {
   const [breach, setBreach] = useState(null);
   const token = localStorage.getItem("token");
   const user = localStorage.getItem("user");
-  useEffect(() => {
+  const [devices, setDevices] = useState([]);
+  const [dname, setDname] = useState("");
 
+  const getDevices = async () => {
+    const devres = await axios({
+      method: "post",
+      url: "http://54.226.199.64:8001/infinite/get_devices",
+      headers: {
+        "Content-Type": "application/octet-stream",
+        "x-token": token,
+        "x-user": user,
+      },
+    });
+    setDevices(devres.data);
+  };
+
+  useEffect(() => {
+    getDevices();
     const interval = setInterval(() => {
       const getDeviceLatLng = async () => {
         const gpsres = await axios({
@@ -25,7 +41,7 @@ export default function LiveTracking() {
             "x-token": token,
             "x-user": user,
           },
-          params: { device_id: "Device01", count: 1 },
+          params: { device_id: dname, count: 1 },
         });
         setCurrentTrack({ lat: gpsres.data[0].lat, lng: gpsres.data[0].long });
       };
@@ -38,7 +54,7 @@ export default function LiveTracking() {
             "x-token": token,
             "x-user": user,
           },
-          params: { device_id: "1", count: 1 },
+          params: { device_id: dname, count: 1 },
         });
         setBreach(breachres.data[0]);      
         
@@ -59,7 +75,12 @@ export default function LiveTracking() {
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [dname]);
+
+  const handleChange = (e)=>{
+    e.preventDefault();
+    setDname(e.target.value);
+  }
 
   return (
     <>
@@ -87,6 +108,27 @@ export default function LiveTracking() {
                   height: "350",
                 }}
               > 
+              <FormControl sx={{ m: 1, width: 200 }} size="small">
+                  <InputLabel id="demo-select-small">Select Device</InputLabel>
+                  <Select
+                    labelId="demo-select-small"
+                    id="demo-select-small"
+                    value={dname}
+                    label="Select Device"
+                    size="small"
+                    onChange={handleChange}
+                  >
+                    {devices.map((device) => {
+                      const { device_id, status } = device;
+
+                      return (
+                        <MenuItem value={device_id} key={device_id}>
+                          {device_id}
+                        </MenuItem>
+                      );
+                    })}
+                  </Select>
+                </FormControl>
                 <MapContainer
                   style={{ height: "calc(100vh - 52px)" }}
                   center={[40.2974883, -82.2067383]}

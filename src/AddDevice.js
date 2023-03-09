@@ -57,6 +57,7 @@ function AddDevice() {
   const handleAdd = (event) => {
     event.preventDefault();
     const addDevice = async () => {
+      debugger;
       try {
         const response = await axios.post(
           "http://54.226.199.64:8001/infinite/create_device",
@@ -73,6 +74,7 @@ function AddDevice() {
             },
           }
         );
+        
         swal({
           text: "Vehicle Registered Success",
           icon: "success",
@@ -85,11 +87,10 @@ function AddDevice() {
       } catch (err) {
         if (
           err.response &&
-          err.response.data &&
-          err.response.data.errorMessage
+          err.response.data
         ) {
           swal({
-            text: err.response.data.errorMessage,
+            text: err.response.data,
             icon: "error",
             type: "error",
           });
