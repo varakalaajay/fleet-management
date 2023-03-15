@@ -5,6 +5,7 @@ import "leaflet/dist/leaflet.css";
 import "leaflet/dist/leaflet.js";
 import { Box, FormControl, Grid, InputLabel, MenuItem, Paper, Select, Toolbar } from "@mui/material";
 import axios from "axios";
+import swal from "sweetalert";
 import { Container } from "@mui/system";
 
 let cursor = 0;
@@ -15,6 +16,8 @@ export default function LiveTracking() {
   const user = localStorage.getItem("user");
   const [devices, setDevices] = useState([]);
   const [dname, setDname] = useState("");
+  const [time1, setTime1] = useState("Time1");
+  const [time2, setTime2] = useState("Time2");
 
   const getDevices = async () => {
     const devres = await axios({
@@ -43,7 +46,10 @@ export default function LiveTracking() {
           },
           params: { device_id: dname, count: 1 },
         });
+        console.log(gpsres.data[0]);
         setCurrentTrack({ lat: gpsres.data[0].lat, lng: gpsres.data[0].long });
+        const timestamp1 = Date.parse(gpsres.data[0].ts);
+        setTime1(timestamp1);
       };
       const getGeofenceBreach = async () => {
         const breachres = await axios({
@@ -56,13 +62,25 @@ export default function LiveTracking() {
           },
           params: { device_id: dname, count: 1 },
         });
-        setBreach(breachres.data[0]);      
+        const timestamp2 = Date.parse(breachres.data[0].ts);
+        setTime2(timestamp2);
+        setBreach(breachres.data[0]);
         
       };
 
       getDeviceLatLng();
       getGeofenceBreach();
-      console.log(breach)
+      console.log(time1, time2);
+     
+      if (time1 === time2) {
+        const date = new Date(time2);
+        const reversedTimestamp = date.toLocaleString();
+        swal({
+          text: `${dname} is crossed the geofence at ${reversedTimestamp}`,
+          icon: "error",
+          type: "error",
+        });
+      }    
       /* if (cursor === geopoints.length - 1) {
         cursor = 0;
         setCurrentTrack(geopoints[cursor]);
@@ -72,6 +90,7 @@ export default function LiveTracking() {
       cursor += 1;
       setCurrentTrack(geopoints[cursor]); */
     }, 5000);
+      
     return () => {
       clearInterval(interval);
     };
@@ -81,6 +100,8 @@ export default function LiveTracking() {
     e.preventDefault();
     setDname(e.target.value);
   }
+
+
 
   return (
     <>
@@ -107,7 +128,7 @@ export default function LiveTracking() {
                   flexDirection: "column",
                   height: "350",
                 }}
-              > 
+              >
               <FormControl sx={{ m: 1, width: 200 }} size="small">
                   <InputLabel id="demo-select-small">Select Device</InputLabel>
                   <Select
