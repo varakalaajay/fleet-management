@@ -3,21 +3,35 @@ import { MapContainer, TileLayer, Polyline } from "react-leaflet";
 import AirplaneMarker from "./AirplaneMarker";
 import "leaflet/dist/leaflet.css";
 import "leaflet/dist/leaflet.js";
-import { Box, FormControl, Grid, InputLabel, MenuItem, Paper, Select, Toolbar } from "@mui/material";
+import {
+  Box,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+  Toolbar,
+} from "@mui/material";
 import axios from "axios";
 import swal from "sweetalert";
 import { Container } from "@mui/system";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 let cursor = 0;
 export default function LiveTracking() {
-  const [currentTrack, setCurrentTrack] = useState({lat: 40.2974883, lng: -82.2067383});
+  const [currentTrack, setCurrentTrack] = useState({
+    lat: 40.2974883,
+    lng: -82.2067383,
+  });
   const [breach, setBreach] = useState(null);
   const token = localStorage.getItem("token");
   const user = localStorage.getItem("user");
   const [devices, setDevices] = useState([]);
   const [dname, setDname] = useState("");
-  const [time1, setTime1] = useState("Time1");
-  const [time2, setTime2] = useState("Time2");
+  const [time1, setTime1] = useState(null);
+  const [time2, setTime2] = useState(null);
 
   const getDevices = async () => {
     const devres = await axios({
@@ -34,53 +48,51 @@ export default function LiveTracking() {
 
   useEffect(() => {
     getDevices();
-    const interval = setInterval(() => {
-      const getDeviceLatLng = async () => {
-        const gpsres = await axios({
-          method: "post",
-          url: "http://54.226.199.64:8001/infinite/get_gps",
-          headers: {
-            "Content-Type": "application/octet-stream",
-            "x-token": token,
-            "x-user": user,
-          },
-          params: { device_id: dname, count: 1 },
-        });
-        console.log(gpsres.data[0]);
-        setCurrentTrack({ lat: gpsres.data[0].lat, lng: gpsres.data[0].long });
-        const timestamp1 = Date.parse(gpsres.data[0].ts);
-        setTime1(timestamp1);
-      };
-      const getGeofenceBreach = async () => {
-        const breachres = await axios({
-          method: "post",
-          url: "http://54.226.199.64:8001/infinite/get_geofence_breach",
-          headers: {
-            "Content-Type": "application/octet-stream",
-            "x-token": token,
-            "x-user": user,
-          },
-          params: { device_id: dname, count: 1 },
-        });
-        const timestamp2 = Date.parse(breachres.data[0].ts);
-        setTime2(timestamp2);
-        setBreach(breachres.data[0]);
-        
-      };
+    const getDeviceLatLng = async () => {
+      const gpsres = await axios({
+        method: "post",
+        url: "http://54.226.199.64:8001/infinite/get_gps",
+        headers: {
+          "Content-Type": "application/octet-stream",
+          "x-token": token,
+          "x-user": user,
+        },
+        params: { device_id: dname, count: 1 },
+      });
+      
+      setCurrentTrack({ lat: gpsres.data[0].lat, lng: gpsres.data[0].long });
+      const timestamp1 = Date.parse(gpsres.data[0].ts);
+      console.log(timestamp1, "time stamp1");
+      setTime1(timestamp1);
+    };
+    const getGeofenceBreach = async () => {
+      const breachres = await axios({
+        method: "post",
+        url: "http://54.226.199.64:8001/infinite/get_geofence_breach",
+        headers: {
+          "Content-Type": "application/octet-stream",
+          "x-token": token,
+          "x-user": user,
+        },
+        params: { device_id: dname, count: 1 },
+      });
 
+      const timestamp2 = Date.parse(breachres.data[0].ts);
+      console.log(timestamp2, "time stamp2");
+      setTime2(timestamp2);
+      setBreach(breachres.data[0]);
+    };
+    const interval = setInterval(() => {
+      
       getDeviceLatLng();
       getGeofenceBreach();
-      console.log(time1, time2);
-     
+
       if (time1 === time2) {
         const date = new Date(time2);
         const reversedTimestamp = date.toLocaleString();
-        swal({
-          text: `${dname} is crossed the geofence at ${reversedTimestamp}`,
-          icon: "error",
-          type: "error",
-        });
-      }    
+        toast(`${dname} crossed the geofence at ${reversedTimestamp}`);
+      }
+
       /* if (cursor === geopoints.length - 1) {
         cursor = 0;
         setCurrentTrack(geopoints[cursor]);
@@ -90,18 +102,18 @@ export default function LiveTracking() {
       cursor += 1;
       setCurrentTrack(geopoints[cursor]); */
     }, 5000);
-      
+   
+    console.log(time1, time2);
     return () => {
       clearInterval(interval);
     };
-  }, [dname]);
+  }, [dname, time2]);
 
-  const handleChange = (e)=>{
+  const handleChange = (e) => {
     e.preventDefault();
     setDname(e.target.value);
-  }
-
-
+    toast(`${e.target.value} Location Changed`);
+  };
 
   return (
     <>
@@ -117,6 +129,8 @@ export default function LiveTracking() {
           overflow: "auto",
         }}
       >
+        {" "}
+        <ToastContainer />
         <Toolbar />
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
           <Grid container spacing={3}>
@@ -129,7 +143,7 @@ export default function LiveTracking() {
                   height: "350",
                 }}
               >
-              <FormControl sx={{ m: 1, width: 200 }} size="small">
+                <FormControl sx={{ m: 1, width: 200 }} size="small">
                   <InputLabel id="demo-select-small">Select Device</InputLabel>
                   <Select
                     labelId="demo-select-small"
