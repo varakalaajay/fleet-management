@@ -107,7 +107,7 @@ export default function LiveTracking() {
     return () => {
       clearInterval(interval);
     };
-  }, [dname, time2]);
+  }, [dname, time2, time1]);
 
   const handleChange = (e) => {
     e.preventDefault();
